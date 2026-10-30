@@ -1,0 +1,361 @@
+
+---
+events:
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeDetermineSystem.cmake:200 (message)"
+      - "CMakeLists.txt:26 (project)"
+    message: |
+      The target system is: Generic -  - arm
+      The host system is: Windows - 10.0.26100 - AMD64
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeDetermineCCompiler.cmake:123 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:26 (project)"
+    message: |
+      Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+      Compiler: C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/clang.exe 
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      0
+      
+      
+      Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "a.out"
+      
+      The C compiler identification is Clang, found in:
+        C:/Users/kazia/OneDrive/Desktop/RP2040_DDS_FW/build/CMakeFiles/4.0.3/CompilerIdC/a.out
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeDetermineCXXCompiler.cmake:126 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:26 (project)"
+    message: |
+      Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+      Compiler: C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/clang++.exe 
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      0
+      
+      
+      Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "a.out"
+      
+      The CXX compiler identification is Clang, found in:
+        C:/Users/kazia/OneDrive/Desktop/RP2040_DDS_FW/build/CMakeFiles/4.0.3/CompilerIdCXX/a.out
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeDetermineCompilerId.cmake:1284 (message)"
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeDetermineASMCompiler.cmake:139 (CMAKE_DETERMINE_COMPILER_ID_VENDOR)"
+      - "CMakeLists.txt:26 (project)"
+    message: |
+      Checking whether the ASM compiler is GNU using "--version" did not match "(GNU assembler)|(GCC)|(Free Software Foundation)":
+      clang version 21.1.3 (https://github.com/espressif/llvm-project.git esp-21.1.3_20260408)
+      Target: riscv32-esp-unknown-elf
+      Thread model: posix
+      InstalledDir: C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeDetermineCompilerId.cmake:1284 (message)"
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeDetermineASMCompiler.cmake:139 (CMAKE_DETERMINE_COMPILER_ID_VENDOR)"
+      - "CMakeLists.txt:26 (project)"
+    message: |
+      Checking whether the ASM compiler is AppleClang using "--version" did not match "(Apple (clang|LLVM) version)":
+      clang version 21.1.3 (https://github.com/espressif/llvm-project.git esp-21.1.3_20260408)
+      Target: riscv32-esp-unknown-elf
+      Thread model: posix
+      InstalledDir: C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeDetermineCompilerId.cmake:1271 (message)"
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeDetermineASMCompiler.cmake:139 (CMAKE_DETERMINE_COMPILER_ID_VENDOR)"
+      - "CMakeLists.txt:26 (project)"
+    message: |
+      Checking whether the ASM compiler is Clang using "--version" matched "(clang version)":
+      clang version 21.1.3 (https://github.com/espressif/llvm-project.git esp-21.1.3_20260408)
+      Target: riscv32-esp-unknown-elf
+      Thread model: posix
+      InstalledDir: C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeDetermineCompilerABI.cmake:83 (try_compile)"
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:26 (project)"
+    checks:
+      - "Detecting C compiler ABI info"
+    directories:
+      source: "C:/Users/kazia/OneDrive/Desktop/RP2040_DDS_FW/build/CMakeFiles/CMakeScratch/TryCompile-xm3qv9"
+      binary: "C:/Users/kazia/OneDrive/Desktop/RP2040_DDS_FW/build/CMakeFiles/CMakeScratch/TryCompile-xm3qv9"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS-NOTFOUND"
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "CMAKE_C_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/kazia/OneDrive/Desktop/RP2040_DDS_FW/build/CMakeFiles/CMakeScratch/TryCompile-xm3qv9'
+        
+        Run Build Command(s): C:/Espressif/tools/ninja/1.12.1/ninja.exe -v cmTC_0cbfc
+        [1/2] C:\\Espressif\\tools\\esp-clang\\esp-21.1.3_20260408\\esp-clang\\bin\\clang.exe   -v -MD -MT CMakeFiles/cmTC_0cbfc.dir/CMakeCCompilerABI.c.obj -MF CMakeFiles\\cmTC_0cbfc.dir\\CMakeCCompilerABI.c.obj.d -o CMakeFiles/cmTC_0cbfc.dir/CMakeCCompilerABI.c.obj -c C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeCCompilerABI.c
+        clang version 21.1.3 (https://github.com/espressif/llvm-project.git esp-21.1.3_20260408)
+        Target: riscv32-esp-unknown-elf
+        Thread model: posix
+        InstalledDir: C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin
+         (in-process)
+         "C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/clang.exe" -cc1 -triple riscv32-esp-unknown-elf -emit-obj -disable-free -clear-ast-before-backend -disable-llvm-verifier -discard-value-names -main-file-name CMakeCCompilerABI.c -mrelocation-model static -mframe-pointer=all -fmath-errno -ffp-contract=on -fno-rounding-math -mconstructor-aliases -nostdsysteminc -target-cpu generic-rv32 -target-feature +m -target-feature +a -target-feature +c -target-feature +zmmul -target-feature +zaamo -target-feature +zalrsc -target-feature +zca -target-feature -b -target-feature -d -target-feature -e -target-feature -f -target-feature -h -target-feature -q -target-feature -sdext -target-feature -sdtrig -target-feature -sha -target-feature -shcounterenw -target-feature -shgatpa -target-feature -shlcofideleg -target-feature -shtvala -target-feature -shvsatpa -target-feature -shvstvala -target-feature -shvstvecd -target-feature -smaia -target-feature -smcdeleg -target-feature -smcntrpmf -target-feature -smcsrind -target-feature -smdbltrp -target-feature -smepmp -target-feature -smmpm -target-feature -smnpm -target-feature -smrnmi -target-feature -smstateen -target-feature -ssaia -target-feature -ssccfg -target-feature -ssccptr -target-feature -sscofpmf -target-feature -sscounterenw -target-feature -sscsrind -target-feature -ssdbltrp -target-feature -ssnpm -target-feature -sspm -target-feature -ssqosid -target-feature -ssstateen -target-feature -ssstrict -target-feature -sstc -target-feature -sstvala -target-feature -sstvecd -target-feature -ssu64xl -target-feature -supm -target-feature -svade -target-feature -svadu -target-feature -svbare -target-feature -svinval -target-feature -svnapot -target-feature -svpbmt -target-feature -svvptc -target-feature -v -target-feature -xandesbfhcvt -target-feature -xandesperf -target-feature -xandesvbfhcvt -target-feature -xandesvdot -target-feature -xandesvpackfph -target-feature -xandesvsintload -target-feature -xcvalu -target-feature -xcvbi -target-feature -xcvbitmanip -target-feature -xcvelw -target-feature -xcvmac -target-feature -xcvmem -target-feature -xcvsimd -target-feature -xespdsp -target-feature -xesploop -target-feature -xespv -target-feature -xespv1v -target-feature -xmipscbop -target-feature -xmipscmov -target-feature -xmipslsp -target-feature -xsfcease -target-feature -xsfmm128t -target-feature -xsfmm16t -target-feature -xsfmm32a16f -target-feature -xsfmm32a32f -target-feature -xsfmm32a8f -target-feature -xsfmm32a8i -target-feature -xsfmm32t -target-feature -xsfmm64a64f -target-feature -xsfmm64t -target-feature -xsfmmbase -target-feature -xsfvcp -target-feature -xsfvfnrclipxfqf -target-feature -xsfvfwmaccqqq -target-feature -xsfvqmaccdod -target-feature -xsfvqmaccqoq -target-feature -xsifivecdiscarddlone -target-feature -xsifivecflushdlone -target-feature -xtheadba -target-feature -xtheadbb -target-feature -xtheadbs -target-feature -xtheadcmo -target-feature -xtheadcondmov -target-feature -xtheadfmemidx -target-feature -xtheadmac -target-feature -xtheadmemidx -target-feature -xtheadmempair -target-feature -xtheadsync -target-feature -xtheadvdot -target-feature -xventanacondops -target-feature -xwchc -target-feature -za128rs -target-feature -za64rs -target-feature -zabha -target-feature -zacas -target-feature -zama16b -target-feature -zawrs -target-feature -zba -target-feature -zbb -target-feature -zbc -target-feature -zbkb -target-feature -zbkc -target-feature -zbkx -target-feature -zbs -target-feature -zcb -target-feature -zcd -target-feature -zce -target-feature -zcf -target-feature -zclsd -target-feature -zcmop -target-feature -zcmp -target-feature -zcmt -target-feature -zdinx -target-feature -zfa -target-feature -zfbfmin -target-feature -zfh -target-feature -zfhmin -target-feature -zfinx -target-feature -zhinx -target-feature -zhinxmin -target-feature -zic64b -target-feature -zicbom -target-feature -zicbop -target-feature -zicboz -target-feature -ziccamoa -target-feature -ziccamoc -target-feature -ziccif -target-feature -zicclsm -target-feature -ziccrse -target-feature -zicntr -target-feature -zicond -target-feature -zicsr -target-feature -zifencei -target-feature -zihintntl -target-feature -zihintpause -target-feature -zihpm -target-feature -zilsd -target-feature -zimop -target-feature -zk -target-feature -zkn -target-feature -zknd -target-feature -zkne -target-feature -zknh -target-feature -zkr -target-feature -zks -target-feature -zksed -target-feature -zksh -target-feature -zkt -target-feature -ztso -target-feature -zvbb -target-feature -zvbc -target-feature -zve32f -target-feature -zve32x -target-feature -zve64d -target-feature -zve64f -target-feature -zve64x -target-feature -zvfbfmin -target-feature -zvfbfwma -target-feature -zvfh -target-feature -zvfhmin -target-feature -zvkb -target-feature -zvkg -target-feature -zvkn -target-feature -zvknc -target-feature -zvkned -target-feature -zvkng -target-feature -zvknha -target-feature -zvknhb -target-feature -zvks -target-feature -zvksc -target-feature -zvksed -target-feature -zvksg -target-feature -zvksh -target-feature -zvkt -target-feature -zvl1024b -target-feature -zvl128b -target-feature -zvl16384b -target-feature -zvl2048b -target-feature -zvl256b -target-feature -zvl32768b -target-feature -zvl32b -target-feature -zvl4096b -target-feature -zvl512b -target-feature -zvl64b -target-feature -zvl65536b -target-feature -zvl8192b -target-feature -experimental-p -target-feature -experimental-smctr -target-feature -experimental-ssctr -target-feature -experimental-svukte -target-feature -experimental-xqccmp -target-feature -experimental-xqcia -target-feature -experimental-xqciac -target-feature -experimental-xqcibi -target-feature -experimental-xqcibm -target-feature -experimental-xqcicli -target-feature -experimental-xqcicm -target-feature -experimental-xqcics -target-feature -experimental-xqcicsr -target-feature -experimental-xqciint -target-feature -experimental-xqciio -target-feature -experimental-xqcilb -target-feature -experimental-xqcili -target-feature -experimental-xqcilia -target-feature -experimental-xqcilo -target-feature -experimental-xqcilsm -target-feature -experimental-xqcisim -target-feature -experimental-xqcisls -target-feature -experimental-xqcisync -target-feature -experimental-xrivosvisni -target-feature -experimental-xrivosvizip -target-feature -experimental-xsfmclic -target-feature -experimental-xsfsclic -target-feature -experimental-zalasr -target-feature -experimental-zicfilp -target-feature -experimental-zicfiss -target-feature -experimental-zvbc32e -target-feature -experimental-zvkgs -target-feature -experimental-zvqdotq -target-feature +relax -target-abi ilp32 -debugger-tuning=gdb -fdebug-compilation-dir=C:/Users/kazia/OneDrive/Desktop/RP2040_DDS_FW/build/CMakeFiles/CMakeScratch/TryCompile-xm3qv9 -v -fcoverage-compilation-dir=C:/Users/kazia/OneDrive/Desktop/RP2040_DDS_FW/build/CMakeFiles/CMakeScratch/TryCompile-xm3qv9 -resource-dir C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang/21 -dependency-file "CMakeFiles\\\\cmTC_0cbfc.dir\\\\CMakeCCompilerABI.c.obj.d" -MT CMakeFiles/cmTC_0cbfc.dir/CMakeCCompilerABI.c.obj -sys-header-deps -internal-isystem C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang/21/include -internal-isystem C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/include -ferror-limit 19 -fno-signed-char -fgnuc-version=4.2.1 -fskip-odr-check-in-gmf -faddrsig -o CMakeFiles/cmTC_0cbfc.dir/CMakeCCompilerABI.c.obj -x c C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeCCompilerABI.c
+        clang -cc1 version 21.1.3 based upon LLVM 21.1.3 default target riscv32-esp-unknown-elf
+        ignoring duplicate directory "C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang/21/include"
+        #include "..." search starts here:
+        #include <...> search starts here:\x0d
+         C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang/21/include\x0d
+         C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/include\x0d
+        End of search list.\x0d
+        [2/2] C:\\Windows\\system32\\cmd.exe /C "cd . && C:\\Espressif\\tools\\esp-clang\\esp-21.1.3_20260408\\esp-clang\\bin\\clang.exe  -v CMakeFiles/cmTC_0cbfc.dir/CMakeCCompilerABI.c.obj -o cmTC_0cbfc   && cd ."
+        clang version 21.1.3 (https://github.com/espressif/llvm-project.git esp-21.1.3_20260408)
+        Target: riscv32-esp-unknown-elf
+        Thread model: posix
+        InstalledDir: C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin
+         "C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/ld.lld" -m elf32lriscv -o cmTC_0cbfc -X C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib/crt0.o CMakeFiles/cmTC_0cbfc.dir/CMakeCCompilerABI.c.obj -LC:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib -lc -lnosys C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib/libclang_rt.builtins.a -l:libunwind.a\x0d
+        
+      exitCode: 0
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeDetermineCompilerABI.cmake:191 (message)"
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:26 (project)"
+    message: |
+      Parsed C implicit include dir info: rv=done
+        found start of include info
+        found start of implicit include info
+          add: [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang/21/include]
+          add: [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/include]
+        end of search list found
+        collapse include dir [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang/21/include] ==> [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang/21/include]
+        collapse include dir [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/include] ==> [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/include]
+        implicit include dirs: [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang/21/include;C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/include]
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeDetermineCompilerABI.cmake:227 (message)"
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:26 (project)"
+    message: |
+      Parsed C implicit link information:
+        link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
+        linker tool regex: [^[ 	]*(->|")?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)))("|,| |$)]
+        ignore line: [Change Dir: 'C:/Users/kazia/OneDrive/Desktop/RP2040_DDS_FW/build/CMakeFiles/CMakeScratch/TryCompile-xm3qv9']
+        ignore line: []
+        ignore line: [Run Build Command(s): C:/Espressif/tools/ninja/1.12.1/ninja.exe -v cmTC_0cbfc]
+        ignore line: [[1/2] C:\\Espressif\\tools\\esp-clang\\esp-21.1.3_20260408\\esp-clang\\bin\\clang.exe   -v -MD -MT CMakeFiles/cmTC_0cbfc.dir/CMakeCCompilerABI.c.obj -MF CMakeFiles\\cmTC_0cbfc.dir\\CMakeCCompilerABI.c.obj.d -o CMakeFiles/cmTC_0cbfc.dir/CMakeCCompilerABI.c.obj -c C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeCCompilerABI.c]
+        ignore line: [clang version 21.1.3 (https://github.com/espressif/llvm-project.git esp-21.1.3_20260408)]
+        ignore line: [Target: riscv32-esp-unknown-elf]
+        ignore line: [Thread model: posix]
+        ignore line: [InstalledDir: C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin]
+        ignore line: [ (in-process)]
+        ignore line: [ "C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/clang.exe" -cc1 -triple riscv32-esp-unknown-elf -emit-obj -disable-free -clear-ast-before-backend -disable-llvm-verifier -discard-value-names -main-file-name CMakeCCompilerABI.c -mrelocation-model static -mframe-pointer=all -fmath-errno -ffp-contract=on -fno-rounding-math -mconstructor-aliases -nostdsysteminc -target-cpu generic-rv32 -target-feature +m -target-feature +a -target-feature +c -target-feature +zmmul -target-feature +zaamo -target-feature +zalrsc -target-feature +zca -target-feature -b -target-feature -d -target-feature -e -target-feature -f -target-feature -h -target-feature -q -target-feature -sdext -target-feature -sdtrig -target-feature -sha -target-feature -shcounterenw -target-feature -shgatpa -target-feature -shlcofideleg -target-feature -shtvala -target-feature -shvsatpa -target-feature -shvstvala -target-feature -shvstvecd -target-feature -smaia -target-feature -smcdeleg -target-feature -smcntrpmf -target-feature -smcsrind -target-feature -smdbltrp -target-feature -smepmp -target-feature -smmpm -target-feature -smnpm -target-feature -smrnmi -target-feature -smstateen -target-feature -ssaia -target-feature -ssccfg -target-feature -ssccptr -target-feature -sscofpmf -target-feature -sscounterenw -target-feature -sscsrind -target-feature -ssdbltrp -target-feature -ssnpm -target-feature -sspm -target-feature -ssqosid -target-feature -ssstateen -target-feature -ssstrict -target-feature -sstc -target-feature -sstvala -target-feature -sstvecd -target-feature -ssu64xl -target-feature -supm -target-feature -svade -target-feature -svadu -target-feature -svbare -target-feature -svinval -target-feature -svnapot -target-feature -svpbmt -target-feature -svvptc -target-feature -v -target-feature -xandesbfhcvt -target-feature -xandesperf -target-feature -xandesvbfhcvt -target-feature -xandesvdot -target-feature -xandesvpackfph -target-feature -xandesvsintload -target-feature -xcvalu -target-feature -xcvbi -target-feature -xcvbitmanip -target-feature -xcvelw -target-feature -xcvmac -target-feature -xcvmem -target-feature -xcvsimd -target-feature -xespdsp -target-feature -xesploop -target-feature -xespv -target-feature -xespv1v -target-feature -xmipscbop -target-feature -xmipscmov -target-feature -xmipslsp -target-feature -xsfcease -target-feature -xsfmm128t -target-feature -xsfmm16t -target-feature -xsfmm32a16f -target-feature -xsfmm32a32f -target-feature -xsfmm32a8f -target-feature -xsfmm32a8i -target-feature -xsfmm32t -target-feature -xsfmm64a64f -target-feature -xsfmm64t -target-feature -xsfmmbase -target-feature -xsfvcp -target-feature -xsfvfnrclipxfqf -target-feature -xsfvfwmaccqqq -target-feature -xsfvqmaccdod -target-feature -xsfvqmaccqoq -target-feature -xsifivecdiscarddlone -target-feature -xsifivecflushdlone -target-feature -xtheadba -target-feature -xtheadbb -target-feature -xtheadbs -target-feature -xtheadcmo -target-feature -xtheadcondmov -target-feature -xtheadfmemidx -target-feature -xtheadmac -target-feature -xtheadmemidx -target-feature -xtheadmempair -target-feature -xtheadsync -target-feature -xtheadvdot -target-feature -xventanacondops -target-feature -xwchc -target-feature -za128rs -target-feature -za64rs -target-feature -zabha -target-feature -zacas -target-feature -zama16b -target-feature -zawrs -target-feature -zba -target-feature -zbb -target-feature -zbc -target-feature -zbkb -target-feature -zbkc -target-feature -zbkx -target-feature -zbs -target-feature -zcb -target-feature -zcd -target-feature -zce -target-feature -zcf -target-feature -zclsd -target-feature -zcmop -target-feature -zcmp -target-feature -zcmt -target-feature -zdinx -target-feature -zfa -target-feature -zfbfmin -target-feature -zfh -target-feature -zfhmin -target-feature -zfinx -target-feature -zhinx -target-feature -zhinxmin -target-feature -zic64b -target-feature -zicbom -target-feature -zicbop -target-feature -zicboz -target-feature -ziccamoa -target-feature -ziccamoc -target-feature -ziccif -target-feature -zicclsm -target-feature -ziccrse -target-feature -zicntr -target-feature -zicond -target-feature -zicsr -target-feature -zifencei -target-feature -zihintntl -target-feature -zihintpause -target-feature -zihpm -target-feature -zilsd -target-feature -zimop -target-feature -zk -target-feature -zkn -target-feature -zknd -target-feature -zkne -target-feature -zknh -target-feature -zkr -target-feature -zks -target-feature -zksed -target-feature -zksh -target-feature -zkt -target-feature -ztso -target-feature -zvbb -target-feature -zvbc -target-feature -zve32f -target-feature -zve32x -target-feature -zve64d -target-feature -zve64f -target-feature -zve64x -target-feature -zvfbfmin -target-feature -zvfbfwma -target-feature -zvfh -target-feature -zvfhmin -target-feature -zvkb -target-feature -zvkg -target-feature -zvkn -target-feature -zvknc -target-feature -zvkned -target-feature -zvkng -target-feature -zvknha -target-feature -zvknhb -target-feature -zvks -target-feature -zvksc -target-feature -zvksed -target-feature -zvksg -target-feature -zvksh -target-feature -zvkt -target-feature -zvl1024b -target-feature -zvl128b -target-feature -zvl16384b -target-feature -zvl2048b -target-feature -zvl256b -target-feature -zvl32768b -target-feature -zvl32b -target-feature -zvl4096b -target-feature -zvl512b -target-feature -zvl64b -target-feature -zvl65536b -target-feature -zvl8192b -target-feature -experimental-p -target-feature -experimental-smctr -target-feature -experimental-ssctr -target-feature -experimental-svukte -target-feature -experimental-xqccmp -target-feature -experimental-xqcia -target-feature -experimental-xqciac -target-feature -experimental-xqcibi -target-feature -experimental-xqcibm -target-feature -experimental-xqcicli -target-feature -experimental-xqcicm -target-feature -experimental-xqcics -target-feature -experimental-xqcicsr -target-feature -experimental-xqciint -target-feature -experimental-xqciio -target-feature -experimental-xqcilb -target-feature -experimental-xqcili -target-feature -experimental-xqcilia -target-feature -experimental-xqcilo -target-feature -experimental-xqcilsm -target-feature -experimental-xqcisim -target-feature -experimental-xqcisls -target-feature -experimental-xqcisync -target-feature -experimental-xrivosvisni -target-feature -experimental-xrivosvizip -target-feature -experimental-xsfmclic -target-feature -experimental-xsfsclic -target-feature -experimental-zalasr -target-feature -experimental-zicfilp -target-feature -experimental-zicfiss -target-feature -experimental-zvbc32e -target-feature -experimental-zvkgs -target-feature -experimental-zvqdotq -target-feature +relax -target-abi ilp32 -debugger-tuning=gdb -fdebug-compilation-dir=C:/Users/kazia/OneDrive/Desktop/RP2040_DDS_FW/build/CMakeFiles/CMakeScratch/TryCompile-xm3qv9 -v -fcoverage-compilation-dir=C:/Users/kazia/OneDrive/Desktop/RP2040_DDS_FW/build/CMakeFiles/CMakeScratch/TryCompile-xm3qv9 -resource-dir C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang/21 -dependency-file "CMakeFiles\\\\cmTC_0cbfc.dir\\\\CMakeCCompilerABI.c.obj.d" -MT CMakeFiles/cmTC_0cbfc.dir/CMakeCCompilerABI.c.obj -sys-header-deps -internal-isystem C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang/21/include -internal-isystem C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/include -ferror-limit 19 -fno-signed-char -fgnuc-version=4.2.1 -fskip-odr-check-in-gmf -faddrsig -o CMakeFiles/cmTC_0cbfc.dir/CMakeCCompilerABI.c.obj -x c C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeCCompilerABI.c]
+        ignore line: [clang -cc1 version 21.1.3 based upon LLVM 21.1.3 default target riscv32-esp-unknown-elf]
+        ignore line: [ignoring duplicate directory "C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang/21/include"]
+        ignore line: [#include "..." search starts here:]
+        ignore line: [#include <...> search starts here:\x0d]
+        ignore line: [ C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang/21/include\x0d]
+        ignore line: [ C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/include\x0d]
+        ignore line: [End of search list.\x0d]
+        ignore line: [[2/2] C:\\Windows\\system32\\cmd.exe /C "cd . && C:\\Espressif\\tools\\esp-clang\\esp-21.1.3_20260408\\esp-clang\\bin\\clang.exe  -v CMakeFiles/cmTC_0cbfc.dir/CMakeCCompilerABI.c.obj -o cmTC_0cbfc   && cd ."]
+        ignore line: [clang version 21.1.3 (https://github.com/espressif/llvm-project.git esp-21.1.3_20260408)]
+        ignore line: [Target: riscv32-esp-unknown-elf]
+        ignore line: [Thread model: posix]
+        ignore line: [InstalledDir: C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin]
+        link line: [ "C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/ld.lld" -m elf32lriscv -o cmTC_0cbfc -X C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib/crt0.o CMakeFiles/cmTC_0cbfc.dir/CMakeCCompilerABI.c.obj -LC:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib -lc -lnosys C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib/libclang_rt.builtins.a -l:libunwind.a\x0d]
+          arg [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/ld.lld] ==> ignore
+          arg [-m] ==> ignore
+          arg [elf32lriscv] ==> ignore
+          arg [-o] ==> ignore
+          arg [cmTC_0cbfc] ==> ignore
+          arg [-X] ==> ignore
+          arg [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib/crt0.o] ==> obj [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib/crt0.o]
+          arg [CMakeFiles/cmTC_0cbfc.dir/CMakeCCompilerABI.c.obj] ==> ignore
+          arg [-LC:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib] ==> dir [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib]
+          arg [-lc] ==> lib [c]
+          arg [-lnosys] ==> lib [nosys]
+          arg [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib/libclang_rt.builtins.a] ==> lib [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib/libclang_rt.builtins.a]
+          arg [-l:libunwind.a] ==> lib [-l:libunwind.a]
+        linker tool for 'C': C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/ld.lld
+        remove lib [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib/libclang_rt.builtins.a]
+        collapse obj [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib/crt0.o] ==> [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib/crt0.o]
+        collapse library dir [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib] ==> [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib]
+        implicit libs: [c;nosys;-l:libunwind.a]
+        implicit objs: [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib/crt0.o]
+        implicit dirs: [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib]
+        implicit fwks: []
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/Internal/CMakeDetermineLinkerId.cmake:36 (message)"
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeDetermineCompilerABI.cmake:270 (cmake_determine_linker_id)"
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:26 (project)"
+    message: |
+      Running the C compiler's linker: "C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/ld.lld" "-v"
+      LLD 21.1.3 (compatible with GNU linkers)
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeDetermineCompilerABI.cmake:83 (try_compile)"
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:26 (project)"
+    checks:
+      - "Detecting CXX compiler ABI info"
+    directories:
+      source: "C:/Users/kazia/OneDrive/Desktop/RP2040_DDS_FW/build/CMakeFiles/CMakeScratch/TryCompile-ka4rmr"
+      binary: "C:/Users/kazia/OneDrive/Desktop/RP2040_DDS_FW/build/CMakeFiles/CMakeScratch/TryCompile-ka4rmr"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS-NOTFOUND"
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_CXX_SCAN_FOR_MODULES: "OFF"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "CMAKE_CXX_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/kazia/OneDrive/Desktop/RP2040_DDS_FW/build/CMakeFiles/CMakeScratch/TryCompile-ka4rmr'
+        
+        Run Build Command(s): C:/Espressif/tools/ninja/1.12.1/ninja.exe -v cmTC_e3c50
+        [1/2] C:\\Espressif\\tools\\esp-clang\\esp-21.1.3_20260408\\esp-clang\\bin\\clang++.exe   -v -MD -MT CMakeFiles/cmTC_e3c50.dir/CMakeCXXCompilerABI.cpp.obj -MF CMakeFiles\\cmTC_e3c50.dir\\CMakeCXXCompilerABI.cpp.obj.d -o CMakeFiles/cmTC_e3c50.dir/CMakeCXXCompilerABI.cpp.obj -c C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeCXXCompilerABI.cpp
+        clang version 21.1.3 (https://github.com/espressif/llvm-project.git esp-21.1.3_20260408)
+        Target: riscv32-esp-unknown-elf
+        Thread model: posix
+        InstalledDir: C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin
+         (in-process)
+         "C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/clang++.exe" -cc1 -triple riscv32-esp-unknown-elf -emit-obj -disable-free -clear-ast-before-backend -disable-llvm-verifier -discard-value-names -main-file-name CMakeCXXCompilerABI.cpp -mrelocation-model static -mframe-pointer=all -fmath-errno -ffp-contract=on -fno-rounding-math -mconstructor-aliases -nostdsysteminc -target-cpu generic-rv32 -target-feature +m -target-feature +a -target-feature +c -target-feature +zmmul -target-feature +zaamo -target-feature +zalrsc -target-feature +zca -target-feature -b -target-feature -d -target-feature -e -target-feature -f -target-feature -h -target-feature -q -target-feature -sdext -target-feature -sdtrig -target-feature -sha -target-feature -shcounterenw -target-feature -shgatpa -target-feature -shlcofideleg -target-feature -shtvala -target-feature -shvsatpa -target-feature -shvstvala -target-feature -shvstvecd -target-feature -smaia -target-feature -smcdeleg -target-feature -smcntrpmf -target-feature -smcsrind -target-feature -smdbltrp -target-feature -smepmp -target-feature -smmpm -target-feature -smnpm -target-feature -smrnmi -target-feature -smstateen -target-feature -ssaia -target-feature -ssccfg -target-feature -ssccptr -target-feature -sscofpmf -target-feature -sscounterenw -target-feature -sscsrind -target-feature -ssdbltrp -target-feature -ssnpm -target-feature -sspm -target-feature -ssqosid -target-feature -ssstateen -target-feature -ssstrict -target-feature -sstc -target-feature -sstvala -target-feature -sstvecd -target-feature -ssu64xl -target-feature -supm -target-feature -svade -target-feature -svadu -target-feature -svbare -target-feature -svinval -target-feature -svnapot -target-feature -svpbmt -target-feature -svvptc -target-feature -v -target-feature -xandesbfhcvt -target-feature -xandesperf -target-feature -xandesvbfhcvt -target-feature -xandesvdot -target-feature -xandesvpackfph -target-feature -xandesvsintload -target-feature -xcvalu -target-feature -xcvbi -target-feature -xcvbitmanip -target-feature -xcvelw -target-feature -xcvmac -target-feature -xcvmem -target-feature -xcvsimd -target-feature -xespdsp -target-feature -xesploop -target-feature -xespv -target-feature -xespv1v -target-feature -xmipscbop -target-feature -xmipscmov -target-feature -xmipslsp -target-feature -xsfcease -target-feature -xsfmm128t -target-feature -xsfmm16t -target-feature -xsfmm32a16f -target-feature -xsfmm32a32f -target-feature -xsfmm32a8f -target-feature -xsfmm32a8i -target-feature -xsfmm32t -target-feature -xsfmm64a64f -target-feature -xsfmm64t -target-feature -xsfmmbase -target-feature -xsfvcp -target-feature -xsfvfnrclipxfqf -target-feature -xsfvfwmaccqqq -target-feature -xsfvqmaccdod -target-feature -xsfvqmaccqoq -target-feature -xsifivecdiscarddlone -target-feature -xsifivecflushdlone -target-feature -xtheadba -target-feature -xtheadbb -target-feature -xtheadbs -target-feature -xtheadcmo -target-feature -xtheadcondmov -target-feature -xtheadfmemidx -target-feature -xtheadmac -target-feature -xtheadmemidx -target-feature -xtheadmempair -target-feature -xtheadsync -target-feature -xtheadvdot -target-feature -xventanacondops -target-feature -xwchc -target-feature -za128rs -target-feature -za64rs -target-feature -zabha -target-feature -zacas -target-feature -zama16b -target-feature -zawrs -target-feature -zba -target-feature -zbb -target-feature -zbc -target-feature -zbkb -target-feature -zbkc -target-feature -zbkx -target-feature -zbs -target-feature -zcb -target-feature -zcd -target-feature -zce -target-feature -zcf -target-feature -zclsd -target-feature -zcmop -target-feature -zcmp -target-feature -zcmt -target-feature -zdinx -target-feature -zfa -target-feature -zfbfmin -target-feature -zfh -target-feature -zfhmin -target-feature -zfinx -target-feature -zhinx -target-feature -zhinxmin -target-feature -zic64b -target-feature -zicbom -target-feature -zicbop -target-feature -zicboz -target-feature -ziccamoa -target-feature -ziccamoc -target-feature -ziccif -target-feature -zicclsm -target-feature -ziccrse -target-feature -zicntr -target-feature -zicond -target-feature -zicsr -target-feature -zifencei -target-feature -zihintntl -target-feature -zihintpause -target-feature -zihpm -target-feature -zilsd -target-feature -zimop -target-feature -zk -target-feature -zkn -target-feature -zknd -target-feature -zkne -target-feature -zknh -target-feature -zkr -target-feature -zks -target-feature -zksed -target-feature -zksh -target-feature -zkt -target-feature -ztso -target-feature -zvbb -target-feature -zvbc -target-feature -zve32f -target-feature -zve32x -target-feature -zve64d -target-feature -zve64f -target-feature -zve64x -target-feature -zvfbfmin -target-feature -zvfbfwma -target-feature -zvfh -target-feature -zvfhmin -target-feature -zvkb -target-feature -zvkg -target-feature -zvkn -target-feature -zvknc -target-feature -zvkned -target-feature -zvkng -target-feature -zvknha -target-feature -zvknhb -target-feature -zvks -target-feature -zvksc -target-feature -zvksed -target-feature -zvksg -target-feature -zvksh -target-feature -zvkt -target-feature -zvl1024b -target-feature -zvl128b -target-feature -zvl16384b -target-feature -zvl2048b -target-feature -zvl256b -target-feature -zvl32768b -target-feature -zvl32b -target-feature -zvl4096b -target-feature -zvl512b -target-feature -zvl64b -target-feature -zvl65536b -target-feature -zvl8192b -target-feature -experimental-p -target-feature -experimental-smctr -target-feature -experimental-ssctr -target-feature -experimental-svukte -target-feature -experimental-xqccmp -target-feature -experimental-xqcia -target-feature -experimental-xqciac -target-feature -experimental-xqcibi -target-feature -experimental-xqcibm -target-feature -experimental-xqcicli -target-feature -experimental-xqcicm -target-feature -experimental-xqcics -target-feature -experimental-xqcicsr -target-feature -experimental-xqciint -target-feature -experimental-xqciio -target-feature -experimental-xqcilb -target-feature -experimental-xqcili -target-feature -experimental-xqcilia -target-feature -experimental-xqcilo -target-feature -experimental-xqcilsm -target-feature -experimental-xqcisim -target-feature -experimental-xqcisls -target-feature -experimental-xqcisync -target-feature -experimental-xrivosvisni -target-feature -experimental-xrivosvizip -target-feature -experimental-xsfmclic -target-feature -experimental-xsfsclic -target-feature -experimental-zalasr -target-feature -experimental-zicfilp -target-feature -experimental-zicfiss -target-feature -experimental-zvbc32e -target-feature -experimental-zvkgs -target-feature -experimental-zvqdotq -target-feature +relax -target-abi ilp32 -debugger-tuning=gdb -fdebug-compilation-dir=C:/Users/kazia/OneDrive/Desktop/RP2040_DDS_FW/build/CMakeFiles/CMakeScratch/TryCompile-ka4rmr -v -fcoverage-compilation-dir=C:/Users/kazia/OneDrive/Desktop/RP2040_DDS_FW/build/CMakeFiles/CMakeScratch/TryCompile-ka4rmr -resource-dir C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang/21 -dependency-file "CMakeFiles\\\\cmTC_e3c50.dir\\\\CMakeCXXCompilerABI.cpp.obj.d" -MT CMakeFiles/cmTC_e3c50.dir/CMakeCXXCompilerABI.cpp.obj -sys-header-deps -internal-isystem C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/include/c++/15.2.0 -internal-isystem C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/include/c++/15.2.0 -internal-isystem C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang/21/include -internal-isystem C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/include -fdeprecated-macro -ferror-limit 19 -fno-signed-char -fgnuc-version=4.2.1 -fskip-odr-check-in-gmf -fcxx-exceptions -fexceptions -faddrsig -D__GCC_HAVE_DWARF2_CFI_ASM=1 -o CMakeFiles/cmTC_e3c50.dir/CMakeCXXCompilerABI.cpp.obj -x c++ C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeCXXCompilerABI.cpp
+        clang -cc1 version 21.1.3 based upon LLVM 21.1.3 default target riscv32-esp-unknown-elf
+        ignoring duplicate directory "C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang/21/include"
+        #include "..." search starts here:
+        #include <...> search starts here:
+         C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/include/c++/15.2.0\x0d
+         C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/include/c++/15.2.0\x0d
+         C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang/21/include\x0d
+         C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/include\x0d
+        End of search list.\x0d
+        [2/2] C:\\Windows\\system32\\cmd.exe /C "cd . && C:\\Espressif\\tools\\esp-clang\\esp-21.1.3_20260408\\esp-clang\\bin\\clang++.exe  -v CMakeFiles/cmTC_e3c50.dir/CMakeCXXCompilerABI.cpp.obj -o cmTC_e3c50   && cd ."
+        clang version 21.1.3 (https://github.com/espressif/llvm-project.git esp-21.1.3_20260408)
+        Target: riscv32-esp-unknown-elf
+        Thread model: posix
+        InstalledDir: C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin
+         "C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/ld.lld" -m elf32lriscv -o cmTC_e3c50 -X C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib/crt0.o CMakeFiles/cmTC_e3c50.dir/CMakeCXXCompilerABI.cpp.obj -LC:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib -lstdc++ -lm -lc -lnosys C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib/libclang_rt.builtins.a -l:libunwind.a\x0d
+        
+      exitCode: 0
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeDetermineCompilerABI.cmake:191 (message)"
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:26 (project)"
+    message: |
+      Parsed CXX implicit include dir info: rv=done
+        found start of include info
+        found start of implicit include info
+          add: [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/include/c++/15.2.0]
+          add: [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/include/c++/15.2.0]
+          add: [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang/21/include]
+          add: [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/include]
+        end of search list found
+        collapse include dir [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/include/c++/15.2.0] ==> [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/include/c++/15.2.0]
+        collapse include dir [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/include/c++/15.2.0] ==> [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang-runtimes/riscv32-esp-unknown-elf/include/c++/15.2.0]
+        collapse include dir [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang/21/include] ==> [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang/21/include]
+        collapse include dir [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/include] ==> [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/include]
+        implicit include dirs: [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/include/c++/15.2.0;C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang-runtimes/riscv32-esp-unknown-elf/include/c++/15.2.0;C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang/21/include;C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/include]
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeDetermineCompilerABI.cmake:227 (message)"
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:26 (project)"
+    message: |
+      Parsed CXX implicit link information:
+        link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
+        linker tool regex: [^[ 	]*(->|")?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)))("|,| |$)]
+        ignore line: [Change Dir: 'C:/Users/kazia/OneDrive/Desktop/RP2040_DDS_FW/build/CMakeFiles/CMakeScratch/TryCompile-ka4rmr']
+        ignore line: []
+        ignore line: [Run Build Command(s): C:/Espressif/tools/ninja/1.12.1/ninja.exe -v cmTC_e3c50]
+        ignore line: [[1/2] C:\\Espressif\\tools\\esp-clang\\esp-21.1.3_20260408\\esp-clang\\bin\\clang++.exe   -v -MD -MT CMakeFiles/cmTC_e3c50.dir/CMakeCXXCompilerABI.cpp.obj -MF CMakeFiles\\cmTC_e3c50.dir\\CMakeCXXCompilerABI.cpp.obj.d -o CMakeFiles/cmTC_e3c50.dir/CMakeCXXCompilerABI.cpp.obj -c C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeCXXCompilerABI.cpp]
+        ignore line: [clang version 21.1.3 (https://github.com/espressif/llvm-project.git esp-21.1.3_20260408)]
+        ignore line: [Target: riscv32-esp-unknown-elf]
+        ignore line: [Thread model: posix]
+        ignore line: [InstalledDir: C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin]
+        ignore line: [ (in-process)]
+        ignore line: [ "C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/clang++.exe" -cc1 -triple riscv32-esp-unknown-elf -emit-obj -disable-free -clear-ast-before-backend -disable-llvm-verifier -discard-value-names -main-file-name CMakeCXXCompilerABI.cpp -mrelocation-model static -mframe-pointer=all -fmath-errno -ffp-contract=on -fno-rounding-math -mconstructor-aliases -nostdsysteminc -target-cpu generic-rv32 -target-feature +m -target-feature +a -target-feature +c -target-feature +zmmul -target-feature +zaamo -target-feature +zalrsc -target-feature +zca -target-feature -b -target-feature -d -target-feature -e -target-feature -f -target-feature -h -target-feature -q -target-feature -sdext -target-feature -sdtrig -target-feature -sha -target-feature -shcounterenw -target-feature -shgatpa -target-feature -shlcofideleg -target-feature -shtvala -target-feature -shvsatpa -target-feature -shvstvala -target-feature -shvstvecd -target-feature -smaia -target-feature -smcdeleg -target-feature -smcntrpmf -target-feature -smcsrind -target-feature -smdbltrp -target-feature -smepmp -target-feature -smmpm -target-feature -smnpm -target-feature -smrnmi -target-feature -smstateen -target-feature -ssaia -target-feature -ssccfg -target-feature -ssccptr -target-feature -sscofpmf -target-feature -sscounterenw -target-feature -sscsrind -target-feature -ssdbltrp -target-feature -ssnpm -target-feature -sspm -target-feature -ssqosid -target-feature -ssstateen -target-feature -ssstrict -target-feature -sstc -target-feature -sstvala -target-feature -sstvecd -target-feature -ssu64xl -target-feature -supm -target-feature -svade -target-feature -svadu -target-feature -svbare -target-feature -svinval -target-feature -svnapot -target-feature -svpbmt -target-feature -svvptc -target-feature -v -target-feature -xandesbfhcvt -target-feature -xandesperf -target-feature -xandesvbfhcvt -target-feature -xandesvdot -target-feature -xandesvpackfph -target-feature -xandesvsintload -target-feature -xcvalu -target-feature -xcvbi -target-feature -xcvbitmanip -target-feature -xcvelw -target-feature -xcvmac -target-feature -xcvmem -target-feature -xcvsimd -target-feature -xespdsp -target-feature -xesploop -target-feature -xespv -target-feature -xespv1v -target-feature -xmipscbop -target-feature -xmipscmov -target-feature -xmipslsp -target-feature -xsfcease -target-feature -xsfmm128t -target-feature -xsfmm16t -target-feature -xsfmm32a16f -target-feature -xsfmm32a32f -target-feature -xsfmm32a8f -target-feature -xsfmm32a8i -target-feature -xsfmm32t -target-feature -xsfmm64a64f -target-feature -xsfmm64t -target-feature -xsfmmbase -target-feature -xsfvcp -target-feature -xsfvfnrclipxfqf -target-feature -xsfvfwmaccqqq -target-feature -xsfvqmaccdod -target-feature -xsfvqmaccqoq -target-feature -xsifivecdiscarddlone -target-feature -xsifivecflushdlone -target-feature -xtheadba -target-feature -xtheadbb -target-feature -xtheadbs -target-feature -xtheadcmo -target-feature -xtheadcondmov -target-feature -xtheadfmemidx -target-feature -xtheadmac -target-feature -xtheadmemidx -target-feature -xtheadmempair -target-feature -xtheadsync -target-feature -xtheadvdot -target-feature -xventanacondops -target-feature -xwchc -target-feature -za128rs -target-feature -za64rs -target-feature -zabha -target-feature -zacas -target-feature -zama16b -target-feature -zawrs -target-feature -zba -target-feature -zbb -target-feature -zbc -target-feature -zbkb -target-feature -zbkc -target-feature -zbkx -target-feature -zbs -target-feature -zcb -target-feature -zcd -target-feature -zce -target-feature -zcf -target-feature -zclsd -target-feature -zcmop -target-feature -zcmp -target-feature -zcmt -target-feature -zdinx -target-feature -zfa -target-feature -zfbfmin -target-feature -zfh -target-feature -zfhmin -target-feature -zfinx -target-feature -zhinx -target-feature -zhinxmin -target-feature -zic64b -target-feature -zicbom -target-feature -zicbop -target-feature -zicboz -target-feature -ziccamoa -target-feature -ziccamoc -target-feature -ziccif -target-feature -zicclsm -target-feature -ziccrse -target-feature -zicntr -target-feature -zicond -target-feature -zicsr -target-feature -zifencei -target-feature -zihintntl -target-feature -zihintpause -target-feature -zihpm -target-feature -zilsd -target-feature -zimop -target-feature -zk -target-feature -zkn -target-feature -zknd -target-feature -zkne -target-feature -zknh -target-feature -zkr -target-feature -zks -target-feature -zksed -target-feature -zksh -target-feature -zkt -target-feature -ztso -target-feature -zvbb -target-feature -zvbc -target-feature -zve32f -target-feature -zve32x -target-feature -zve64d -target-feature -zve64f -target-feature -zve64x -target-feature -zvfbfmin -target-feature -zvfbfwma -target-feature -zvfh -target-feature -zvfhmin -target-feature -zvkb -target-feature -zvkg -target-feature -zvkn -target-feature -zvknc -target-feature -zvkned -target-feature -zvkng -target-feature -zvknha -target-feature -zvknhb -target-feature -zvks -target-feature -zvksc -target-feature -zvksed -target-feature -zvksg -target-feature -zvksh -target-feature -zvkt -target-feature -zvl1024b -target-feature -zvl128b -target-feature -zvl16384b -target-feature -zvl2048b -target-feature -zvl256b -target-feature -zvl32768b -target-feature -zvl32b -target-feature -zvl4096b -target-feature -zvl512b -target-feature -zvl64b -target-feature -zvl65536b -target-feature -zvl8192b -target-feature -experimental-p -target-feature -experimental-smctr -target-feature -experimental-ssctr -target-feature -experimental-svukte -target-feature -experimental-xqccmp -target-feature -experimental-xqcia -target-feature -experimental-xqciac -target-feature -experimental-xqcibi -target-feature -experimental-xqcibm -target-feature -experimental-xqcicli -target-feature -experimental-xqcicm -target-feature -experimental-xqcics -target-feature -experimental-xqcicsr -target-feature -experimental-xqciint -target-feature -experimental-xqciio -target-feature -experimental-xqcilb -target-feature -experimental-xqcili -target-feature -experimental-xqcilia -target-feature -experimental-xqcilo -target-feature -experimental-xqcilsm -target-feature -experimental-xqcisim -target-feature -experimental-xqcisls -target-feature -experimental-xqcisync -target-feature -experimental-xrivosvisni -target-feature -experimental-xrivosvizip -target-feature -experimental-xsfmclic -target-feature -experimental-xsfsclic -target-feature -experimental-zalasr -target-feature -experimental-zicfilp -target-feature -experimental-zicfiss -target-feature -experimental-zvbc32e -target-feature -experimental-zvkgs -target-feature -experimental-zvqdotq -target-feature +relax -target-abi ilp32 -debugger-tuning=gdb -fdebug-compilation-dir=C:/Users/kazia/OneDrive/Desktop/RP2040_DDS_FW/build/CMakeFiles/CMakeScratch/TryCompile-ka4rmr -v -fcoverage-compilation-dir=C:/Users/kazia/OneDrive/Desktop/RP2040_DDS_FW/build/CMakeFiles/CMakeScratch/TryCompile-ka4rmr -resource-dir C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang/21 -dependency-file "CMakeFiles\\\\cmTC_e3c50.dir\\\\CMakeCXXCompilerABI.cpp.obj.d" -MT CMakeFiles/cmTC_e3c50.dir/CMakeCXXCompilerABI.cpp.obj -sys-header-deps -internal-isystem C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/include/c++/15.2.0 -internal-isystem C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/include/c++/15.2.0 -internal-isystem C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang/21/include -internal-isystem C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/include -fdeprecated-macro -ferror-limit 19 -fno-signed-char -fgnuc-version=4.2.1 -fskip-odr-check-in-gmf -fcxx-exceptions -fexceptions -faddrsig -D__GCC_HAVE_DWARF2_CFI_ASM=1 -o CMakeFiles/cmTC_e3c50.dir/CMakeCXXCompilerABI.cpp.obj -x c++ C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeCXXCompilerABI.cpp]
+        ignore line: [clang -cc1 version 21.1.3 based upon LLVM 21.1.3 default target riscv32-esp-unknown-elf]
+        ignore line: [ignoring duplicate directory "C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang/21/include"]
+        ignore line: [#include "..." search starts here:]
+        ignore line: [#include <...> search starts here:]
+        ignore line: [ C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/include/c++/15.2.0\x0d]
+        ignore line: [ C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/include/c++/15.2.0\x0d]
+        ignore line: [ C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang/21/include\x0d]
+        ignore line: [ C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/include\x0d]
+        ignore line: [End of search list.\x0d]
+        ignore line: [[2/2] C:\\Windows\\system32\\cmd.exe /C "cd . && C:\\Espressif\\tools\\esp-clang\\esp-21.1.3_20260408\\esp-clang\\bin\\clang++.exe  -v CMakeFiles/cmTC_e3c50.dir/CMakeCXXCompilerABI.cpp.obj -o cmTC_e3c50   && cd ."]
+        ignore line: [clang version 21.1.3 (https://github.com/espressif/llvm-project.git esp-21.1.3_20260408)]
+        ignore line: [Target: riscv32-esp-unknown-elf]
+        ignore line: [Thread model: posix]
+        ignore line: [InstalledDir: C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin]
+        link line: [ "C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/ld.lld" -m elf32lriscv -o cmTC_e3c50 -X C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib/crt0.o CMakeFiles/cmTC_e3c50.dir/CMakeCXXCompilerABI.cpp.obj -LC:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib -lstdc++ -lm -lc -lnosys C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib/libclang_rt.builtins.a -l:libunwind.a\x0d]
+          arg [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/ld.lld] ==> ignore
+          arg [-m] ==> ignore
+          arg [elf32lriscv] ==> ignore
+          arg [-o] ==> ignore
+          arg [cmTC_e3c50] ==> ignore
+          arg [-X] ==> ignore
+          arg [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib/crt0.o] ==> obj [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib/crt0.o]
+          arg [CMakeFiles/cmTC_e3c50.dir/CMakeCXXCompilerABI.cpp.obj] ==> ignore
+          arg [-LC:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib] ==> dir [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib]
+          arg [-lstdc++] ==> lib [stdc++]
+          arg [-lm] ==> lib [m]
+          arg [-lc] ==> lib [c]
+          arg [-lnosys] ==> lib [nosys]
+          arg [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib/libclang_rt.builtins.a] ==> lib [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib/libclang_rt.builtins.a]
+          arg [-l:libunwind.a] ==> lib [-l:libunwind.a]
+        linker tool for 'CXX': C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/ld.lld
+        remove lib [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib/libclang_rt.builtins.a]
+        collapse obj [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib/crt0.o] ==> [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib/crt0.o]
+        collapse library dir [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/../lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib] ==> [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib]
+        implicit libs: [stdc++;m;c;nosys;-l:libunwind.a]
+        implicit objs: [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib/crt0.o]
+        implicit dirs: [C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/lib/clang-runtimes/riscv32-esp-unknown-elf/rv32imac-zicsr-zifencei_ilp32/lib]
+        implicit fwks: []
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/Internal/CMakeDetermineLinkerId.cmake:36 (message)"
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeDetermineCompilerABI.cmake:270 (cmake_determine_linker_id)"
+      - "C:/Espressif/tools/cmake/4.0.3/share/cmake-4.0/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:26 (project)"
+    message: |
+      Running the CXX compiler's linker: "C:/Espressif/tools/esp-clang/esp-21.1.3_20260408/esp-clang/bin/ld.lld" "-v"
+      LLD 21.1.3 (compatible with GNU linkers)
+...

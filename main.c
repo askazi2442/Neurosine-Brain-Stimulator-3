@@ -1,858 +1,134 @@
-/* ESP32-S3 BLE NUS — I2C DDS Master Controller
- *
- * Implements a BLE GATT peripheral (Nordic UART Service) that acts as a
- * wireless command interface to RP2040 Zero DDS slave MCUs connected via I2C.
- *
- * Service / Characteristic UUIDs (Nordic UART Service):
- * Service  6E400001-B5A3-F393-E0A9-E50E24DCCA9E
- * RX char  6E400002-B5A3-F393-E0A9-E50E24DCCA9E  (central writes here)
- * TX char  6E400003-B5A3-F393-E0A9-E50E24DCCA9E  (ESP32 notifies here)
- *
- * BLE DDS command set (write to RX):
- * DDS <n> FREQ <hz>                Set frequency for slave n (0-7)
- * DDS <n> WAVE SINE|SQUARE|TRIANGLE|SAWTOOTH
- * DDS <n> AMP <mA>                 Set amplitude for slave n
- * DDS <n> ON / OFF                 Enable / disable slave n
- * DDS <n> STATUS                   Read live status from slave n over I2C
- * DDS ALL FREQ|WAVE|AMP|ON|OFF|STATUS   Broadcast to all slaves
- *
- * Current test config: 1 RP2040 Zero slave at I2C address 0x50 (slave 0).
- * Up to 8 slaves supported (0x50–0x57) — add hardware to expand.
- *
- * Companion web client: web/ble_test.html (uses Web Bluetooth API)
- *
- * ── TEST MODE ────────────────────────────────────────────────────────────
- * Set DDS_TEST_MODE to 1 to stub out all real I2C DDS calls.
- * Instead of transmitting over I2C, the stubs update the driver's local
- * state cache directly.  The OLED display task reads that same cache, so
- * every BLE command immediately appears on-screen — no RP2040 hardware
- * required.  Set to 0 for normal operation with real hardware.
- * ─────────────────────────────────────────────────────────────────────── */
+#include "pico/stdlib.h"
+#include "pico/multicore.h"
+#include "hardware/watchdog.h"
+#include "spi_dac.h"
+#include "dds_tables.h"
+#include "i2c_slave.h"
+#include "hardware/adc.h"
 
-/* Set to 1 to use software-only DDS stubs (no I2C hardware needed). */
-#define DDS_TEST_MODE       0
+/* RMS-DC converter sends output voltage to RP2040 PIN 3
+*/
+#define LEAD_SENSE_GPIO 29
+#define LEAD_SENSE_ADC_CHANNEL 3
 
-/* Set to 1 for Chrome desktop testing (no BLE pairing/encryption).
- * Set to 0 for Android production (full MITM-protected secure connection).
- * !! NEVER ship or use near high-power hardware with this set to 1 !!      */
-#define BLE_TEST_NO_SECURITY  1
+/* Calibrated from 4-point measurement (1k/2k/5k/10kHz):
+ * actual loop rate = avg(measured * old_constant / target) = 323819        */
+#define SAMPLE_RATE 313036UL
 
-/* Number of high-voltage channel rails physically populated (1–4).
- * Only this many rails will be enabled after a successful hardware init.
- * Channels beyond this count remain disabled regardless of BLE commands.  */
-#define NUM_CHANNELS        2
+/* Ramp interval — step amplitude by 1 count every N samples.
+ * 1 count = 2000uA / 65536 = 0.03052 uA
+ * At SAMPLE_RATE=323819: interval=99 → 99.82 uA/sec ≤ 100 uA/sec limit.
+ * Full scale ramp (0→65536) takes ~20 seconds.                              */
+#define AMP_RAMP_INTERVAL 99U
 
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/queue.h"
+/* Watchdog timeout in milliseconds.
+ * The DDS loop runs at ~323kHz so the watchdog is pet every sample.
+ * 500ms gives enormous headroom — if Core 0 stalls for half a second
+ * something is seriously wrong and the DAC should be shut down.             */
+#define WATCHDOG_TIMEOUT_MS 500U
 
-#include "esp_log.h"
-#include "esp_err.h"
-#include "nvs_flash.h"
-#include "esp_event.h"
-#include "gpio_pins.h"
-#include "i2c_dds_master.h"
-#include "oled_driver.h"
-#include "fsm.h"
-#include "gpio_helpers.h"
+/* Shared state — written by Core 1 (I2C), read by Core 0 (DDS)
+ * Never write g_amplitude_target directly from the DDS loop —
+ * use g_amplitude_target as the requested level; the loop ramps toward it.  */
+volatile uint32_t    g_phase_inc        = 0;
+volatile wave_type_t g_wave_type        = WAVE_SINE;
+volatile uint32_t    g_amplitude_target = 0;      /* 0 = off, 65536 = full  */
 
-/* NimBLE */
-#include "nimble/nimble_port.h"
-#include "nimble/nimble_port_freertos.h"
-#include "host/ble_hs.h"
-#include "host/ble_sm.h"
-#include "host/util/util.h"
-#include "services/gap/ble_svc_gap.h"
-#include "services/gatt/ble_svc_gatt.h"
-
-/* ESP-IDF */
-#include "esp_random.h"
-#include "esp_pm.h"
-
-/*GPIO */
-#include "driver/gpio.h"
-
-
-/*BLE*/
-#define TAG         "BLE_NUS"
-#define DEVICE_NAME "R2D2"
-
-/* ===========================================================================
- * DDS TEST MODE — software stubs (no I2C hardware required)
- * =========================================================================*/
-#if DDS_TEST_MODE
-
-static esp_err_t dds_test_set_freq(dds_master_t *dds, uint8_t idx, float hz)
-{
-    if (idx >= DDS_NUM_SLAVES) return ESP_ERR_INVALID_ARG;
-    dds->slave_state[idx].freq_hz = hz;
-    ESP_LOGI(TAG, "[TEST] slave %d FREQ=%.3f Hz", idx, hz);
-    return ESP_OK;
+static uint32_t calc_phase_inc(uint32_t freq_hz) {
+    return (uint32_t)(freq_hz * 4294967296ULL / SAMPLE_RATE);
 }
 
-static esp_err_t dds_test_set_waveform(dds_master_t *dds, uint8_t idx, dds_waveform_t w)
-{
-    if (idx >= DDS_NUM_SLAVES) return ESP_ERR_INVALID_ARG;
-    dds->slave_state[idx].waveform = w;
-    ESP_LOGI(TAG, "[TEST] slave %d WAVE=%d", idx, (int)w);
-    return ESP_OK;
-}
+/* Core 1 — handles I2C slave forever */
+void core1_entry(void) {
+    // NOTE: need to keep ADC samplings eparate from waveform generation
+    while (true) {
+        uint16_t voltage_mv = lead_sense_read_mv();
 
-static esp_err_t dds_test_set_amplitude(dds_master_t *dds, uint8_t idx, float mA)
-{
-    if (idx >= DDS_NUM_SLAVES) return ESP_ERR_INVALID_ARG;
-    dds->slave_state[idx].amplitude_mA = mA;
-    ESP_LOGI(TAG, "[TEST] slave %d AMP=%.3f mA", idx, mA);
-    return ESP_OK;
-}
+        i2c_slave_set_lead_voltage(voltage_mv);
 
-static esp_err_t dds_test_set_enable(dds_master_t *dds, uint8_t idx, bool en)
-{
-    if (idx >= DDS_NUM_SLAVES) return ESP_ERR_INVALID_ARG;
-    dds->slave_state[idx].enabled = en;
-    ESP_LOGI(TAG, "[TEST] slave %d %s", idx, en ? "ON" : "OFF");
-    return ESP_OK;
-}
-
-static esp_err_t dds_test_get_status(dds_master_t *dds, uint8_t idx,
-                                      dds_slave_state_t *out, bool *fault)
-{
-    if (idx >= DDS_NUM_SLAVES) return ESP_ERR_INVALID_ARG;
-    *out   = dds->slave_state[idx];
-    *fault = false;
-    return ESP_OK;
-}
-
-/* Redirect real API calls to stubs */
-#define dds_master_set_freq(d,i,v)       dds_test_set_freq((d),(i),(v))
-#define dds_master_set_waveform(d,i,v)   dds_test_set_waveform((d),(i),(v))
-#define dds_master_set_amplitude(d,i,v)  dds_test_set_amplitude((d),(i),(v))
-#define dds_master_set_enable(d,i,v)     dds_test_set_enable((d),(i),(v))
-#define dds_master_get_status(d,i,o,f)   dds_test_get_status((d),(i),(o),(f))
-
-#endif /* DDS_TEST_MODE */
-
-/* ── NUS UUIDs ───────────────────────────────────────────────────────── */
-static const ble_uuid128_t NUS_SERVICE_UUID =
-    BLE_UUID128_INIT(0x9e, 0xca, 0xdc, 0x24, 0x0e, 0xe5, 0xa9, 0xe0,
-                     0x93, 0xf3, 0xa3, 0xb5, 0x01, 0x00, 0x40, 0x6e);
-
-static const ble_uuid128_t NUS_RX_UUID =
-    BLE_UUID128_INIT(0x9e, 0xca, 0xdc, 0x24, 0x0e, 0xe5, 0xa9, 0xe0,
-                     0x93, 0xf3, 0xa3, 0xb5, 0x02, 0x00, 0x40, 0x6e);
-
-static const ble_uuid128_t NUS_TX_UUID =
-    BLE_UUID128_INIT(0x9e, 0xca, 0xdc, 0x24, 0x0e, 0xe5, 0xa9, 0xe0,
-                     0x93, 0xf3, 0xa3, 0xb5, 0x03, 0x00, 0x40, 0x6e);
-
-/* ── State ─────────────────────────────────────────────────────────────── */
-static uint8_t  s_own_addr_type;
-static uint16_t s_conn_handle    = BLE_HS_CONN_HANDLE_NONE;
-static uint16_t s_tx_char_handle;
-static bool     s_notify_enabled = false;
-
-static dds_master_t s_dds;
-// UPDATED: closes the ON gate as soon as BLE disconnects. 
-static volatile bool s_ble_shutdown_pending;
-
-// UPDATED: the FSM waits for the RP2040 amplitude ramp. Keep that wait out of the NimBLE host callback, while closing the ON gate before scheduling it. 
-static void ble_shutdown_task(void *arg)
-{
-    fsm_handle_event(EV_BLE_LOST);
-    vTaskDelete(NULL);
-}
-
-
-/* Populated at boot if DDS init fails; delivered to the BLE client on
- * first subscribe so the fault is visible even though BLE wasn't up yet. */
-static char s_boot_fault_msg[64];
-
-/* INCREASED QUEUE SIZE: Prevents commands from dropping during rapid bursts */
-#define DDS_CMD_QUEUE_LEN  16
-#define DDS_CMD_MAX_LEN    252 
-
-typedef struct {
-    char sub[DDS_CMD_MAX_LEN + 1];
-} dds_cmd_msg_t;
-
-static QueueHandle_t s_dds_cmd_queue;
-
-static void ble_advertise(void);
-static void ble_notify_str(const char *msg);
-
-static void ble_notify_str(const char *msg)
-{
-    if (!s_notify_enabled || s_conn_handle == BLE_HS_CONN_HANDLE_NONE) return;
-    struct os_mbuf *om = ble_hs_mbuf_from_flat(msg, strlen(msg));
-    if (om) {
-        ble_gatts_notify_custom(s_conn_handle, s_tx_char_handle, om);
-        ESP_LOGI(TAG, "TX -> \"%s\"", msg);
+        sleep_ms(20);
     }
 }
 
-/* Disable one slave and notify BLE. Called on any per-slave I2C error.
- *
- * Writes directly to the local state cache instead of re-issuing an I2C
- * transaction — the slave handle may already be in a bad state, and calling
- * dds_master_set_enable() here would hit the stuck peripheral a second time,
- * compounding the original ESP_ERR_INVALID_STATE error. */
-static void report_slave_fault(uint8_t idx, esp_err_t err)
-{
-    s_dds.slave_state[idx].enabled = false;   /* update cache directly */
-    char msg[64];
-    snprintf(msg, sizeof(msg), "DDS ERR S%d I2C %s — output disabled",
-             idx, esp_err_to_name(err));
-    ESP_LOGE(TAG, "%s", msg);
-    ble_notify_str(msg);
+/* Lead detection methods - initialization and reading voltage from pin
+*/
+static void lead_sense_init(void) {
+    adc_init();
+    adc_gpio_init(LEAD_SENSE_GPIO);
+    adc_select_input(LEAD_SENSE_ADC_CHANNEL);
 }
 
-/* ── DDS command handler ────────────────────────────────────────────────── */
-static void process_dds_command(const char *sub)
-{
-    if (s_ble_shutdown_pending || s_conn_handle == BLE_HS_CONN_HANDLE_NONE) {
-        ESP_LOGW(TAG, "DDS command rejected: BLE unavailable");
-        return;
-    }
-
-    static const char *wnames[] = {"SINE", "SQUARE", "TRIANGLE", "SAWTOOTH"};
-    char resp[128];
-    esp_err_t err = ESP_OK;
-
-    if (!s_dds.initialized) {
-        ble_notify_str("DDS ERR driver not initialized");
-        return;
-    }
-
-    uint8_t slave_idx = 0;
-    bool    broadcast = false;
-    const char *cmd;
-
-    if (strncmp(sub, "ALL ", 4) == 0) {
-        broadcast = true;
-        cmd = sub + 4;
-    } else if (sub[0] >= '0' && sub[0] <= '7' && sub[1] == ' ') {
-        slave_idx = (uint8_t)(sub[0] - '0');
-        if (!dds_master_slave_present(&s_dds, slave_idx)) {
-            snprintf(resp, sizeof(resp), "DDS ERR S%d not present on bus", slave_idx);
-            ble_notify_str(resp);
-            return;
-        }
-        cmd = sub + 2;
-    } else {
-        ble_notify_str("DDS ERR use 'DDS <0-7> CMD' or 'DDS ALL CMD'");
-        return;
-    }
-
-    /* ── FREQ ── */
-    if (strncmp(cmd, "FREQ ", 5) == 0) {
-        float freq = strtof(cmd + 5, NULL);
-        if (freq < 0.001f || freq > 20000.0f) {
-            ble_notify_str("DDS ERR FREQ range 0.001-20000 Hz");
-            return;
-        }
-        if (broadcast) {
-            for (uint8_t i = 0; i < DDS_NUM_SLAVES; i++) {
-                esp_err_t e = dds_master_set_freq(&s_dds, i, freq);
-                if (e != ESP_OK) { report_slave_fault(i, e); err = e; }
-            }
-            if (err == ESP_OK) snprintf(resp, sizeof(resp), "DDS OK ALL FREQ=%.3f", freq);
-        } else {
-            err = dds_master_set_freq(&s_dds, slave_idx, freq);
-            snprintf(resp, sizeof(resp), "DDS OK S%d FREQ=%.3f", slave_idx, freq);
-        }
-
-    /* ── WAVE ── */
-    } else if (strncmp(cmd, "WAVE ", 5) == 0) {
-        const char *wname = cmd + 5;
-        dds_waveform_t wtype;
-        if      (strcmp(wname, "SINE")     == 0) wtype = DDS_WAVE_SINE;
-        else if (strcmp(wname, "SQUARE")   == 0) wtype = DDS_WAVE_SQUARE;
-        else if (strcmp(wname, "TRIANGLE") == 0) wtype = DDS_WAVE_TRIANGLE;
-        else if (strcmp(wname, "SAWTOOTH") == 0) wtype = DDS_WAVE_SAWTOOTH;
-        else {
-            ble_notify_str("DDS ERR WAVE use SINE|SQUARE|TRIANGLE|SAWTOOTH");
-            return;
-        }
-        if (broadcast) {
-            for (uint8_t i = 0; i < DDS_NUM_SLAVES; i++) {
-                esp_err_t e = dds_master_set_waveform(&s_dds, i, wtype);
-                if (e != ESP_OK) { report_slave_fault(i, e); err = e; }
-            }
-            if (err == ESP_OK) snprintf(resp, sizeof(resp), "DDS OK ALL WAVE=%s", wnames[wtype]);
-        } else {
-            err = dds_master_set_waveform(&s_dds, slave_idx, wtype);
-            snprintf(resp, sizeof(resp), "DDS OK S%d WAVE=%s", slave_idx, wnames[wtype]);
-        }
-
-    /* ── AMP ── */
-    } else if (strncmp(cmd, "AMP ", 4) == 0) {
-        float amp = strtof(cmd + 4, NULL);
-        if (amp < 0.0f || amp > 65.535f) {
-            ble_notify_str("DDS ERR AMP range 0-65.535 mA");
-            return;
-        }
-        if (broadcast) {
-            for (uint8_t i = 0; i < DDS_NUM_SLAVES; i++) {
-                esp_err_t e = dds_master_set_amplitude(&s_dds, i, amp);
-                if (e != ESP_OK) { report_slave_fault(i, e); err = e; }
-            }
-            if (err == ESP_OK) snprintf(resp, sizeof(resp), "DDS OK ALL AMP=%.3f", amp);
-        } else {
-            err = dds_master_set_amplitude(&s_dds, slave_idx, amp);
-            snprintf(resp, sizeof(resp), "DDS OK S%d AMP=%.3f", slave_idx, amp);
-        }
-
-    /* ── ON ── */
-    } else if (strcmp(cmd, "ON") == 0) {
-        // UPDATED: FSM has final authority over whether stimulation may start.
-        if (!fsm_stim_permitted()) {
-            snprintf(resp, sizeof(resp), "DDS ERR stimulation blocked; FSM=%s", fsm_state_name(fsm_get_state()));
-            ble_notify_str(resp);
-            ESP_LOGW(TAG, "ON rejected; FSM=%s", fsm_state_name(fsm_get_state()));
-            return;
-        }
-
-        if (broadcast) {
-            for (uint8_t i = 0; i < DDS_NUM_SLAVES; i++) {
-                esp_err_t e = dds_master_set_enable(&s_dds, i, true);
-                if (e != ESP_OK) { report_slave_fault(i, e); err = e; }
-            }
-            if (err == ESP_OK) strcpy(resp, "DDS OK ALL ON");
-        } else {
-            err = dds_master_set_enable(&s_dds, slave_idx, true);
-            snprintf(resp, sizeof(resp), "DDS OK S%d ON", slave_idx);
-        }
-
-    /* ── OFF ── */
-    } else if (strcmp(cmd, "OFF") == 0) {
-        if (broadcast) {
-            for (uint8_t i = 0; i < DDS_NUM_SLAVES; i++) {
-                esp_err_t e = dds_master_set_enable(&s_dds, i, false);
-                if (e != ESP_OK) { report_slave_fault(i, e); err = e; }
-            }
-            if (err == ESP_OK) strcpy(resp, "DDS OK ALL OFF");
-        } else {
-            err = dds_master_set_enable(&s_dds, slave_idx, false);
-            snprintf(resp, sizeof(resp), "DDS OK S%d OFF", slave_idx);
-        }
-
-    /* ── STATUS ── */
-    } else if (strcmp(cmd, "STATUS") == 0) {
-        uint8_t start = broadcast ? 0        : slave_idx;
-        uint8_t end   = broadcast ? DDS_NUM_SLAVES : slave_idx + 1;
-        for (uint8_t i = start; i < end; i++) {
-            dds_slave_state_t st = {0};
-            bool fault = false;
-            esp_err_t e = dds_master_get_status(&s_dds, i, &st, &fault);
-            if (e == ESP_OK) {
-                snprintf(resp, sizeof(resp),
-                         "DDS S%d FREQ=%.0f WAVE=%s AMP=%.2f STATE=%s%s",
-                         i, st.freq_hz, wnames[st.waveform], st.amplitude_mA,
-                         st.enabled ? "ON" : "OFF", fault ? " FAULT" : "");
-            } else {
-                snprintf(resp, sizeof(resp), "DDS S%d ERR %s",
-                         i, esp_err_to_name(e));
-            }
-            ble_notify_str(resp);
-        }
-        return;
-
-    } else {
-        ble_notify_str("DDS ERR CMD unknown");
-        return;
-    }
-
-    if (err != ESP_OK) {
-        /* Broadcast: errors already reported per-slave inside the loops. */
-        if (!broadcast) {
-            report_slave_fault(slave_idx, err);
-        }
-        return;
-    }
-    ble_notify_str(resp);
+static uint16_t lead_sense_read_mv(void) {
+    adc_select_input(LEAD_SENSE_ADC_CHANNEL);
+    uint16_t raw = adc_read();
+    return (uint16_t)(((uint32_t)raw * 3300U) / 4095U);
 }
 
-static void dds_cmd_task(void *param)
-{
-    dds_cmd_msg_t msg;
-    for (;;) {
-        if (xQueueReceive(s_dds_cmd_queue, &msg, portMAX_DELAY) == pdTRUE) {
-            process_dds_command(msg.sub);
-            
-            /* CRUCIAL FIX: Give the RP2040 I2C interrupt 15ms to breathe
-               before blasting it with the next command in the queue */
-            vTaskDelay(pdMS_TO_TICKS(15));
-        }
-    }
-}
+int main(void) {
+    stdio_init_all();
 
-static void handle_dds_command(const char *sub)
-{
-    dds_cmd_msg_t msg;
-    strncpy(msg.sub, sub, DDS_CMD_MAX_LEN);
-    msg.sub[DDS_CMD_MAX_LEN] = '\0';
-    if (xQueueSend(s_dds_cmd_queue, &msg, 0) != pdTRUE) {
-        ble_notify_str("DDS ERR busy — try again");
-    }
-}
-
-/* ── GATT callbacks ─────────────────────────────────────────────────────── */
-
-/* SMART PARSER FIX: Automatically splits concatenated/multi-line BLE strings safely */
-static int nus_rx_write_cb(uint16_t conn_handle, uint16_t attr_handle,
-                           struct ble_gatt_access_ctxt *ctxt, void *arg)
-{
-    uint16_t data_len = OS_MBUF_PKTLEN(ctxt->om);
-    char buf[256];
-    if (data_len >= sizeof(buf)) {
-        data_len = sizeof(buf) - 1;
-    }
-    ble_hs_mbuf_to_flat(ctxt->om, buf, data_len, NULL);
-    buf[data_len] = '\0';
-
-    ESP_LOGI(TAG, "RX <- \"%s\"", buf);
-
-    /* Block all commands in EMERGENCY or FAULT state — manual reset required */
-    /*if (fsm_get_state() == STATE_EMERGENCY){
-        ble_notify_str("EMERGENCY ACTIVE — manual reset required; commands blocked");
-        ESP_LOGW(TAG, "BLE command rejected: system in EMERGENCY state");
-        return 0;
-    }*/
-
-    if (fsm_get_state() == STATE_FAULT){
-        ble_notify_str("FAULT ACTIVE — manual reset required; commands blocked");
-        ESP_LOGW(TAG, "BLE command rejected: system in FAULT state");
-        return 0;
+    /* ── Watchdog-reset safety shutdown ─────────────────────────────────────
+     * If we're restarting after a watchdog timeout, the DDS loop stalled
+     * while the DAC may have been outputting. Power it down immediately
+     * before doing anything else — before even initialising SPI fully.
+     * spi_dac_init() is called right after to bring it back to a clean state.*/
+    if (watchdog_caused_reboot()) {
+        spi_dac_init();
+        lead_sense_init();
+        spi_dac_powerdown();   /* tristate output — safe, high-impedance */
     }
 
-    /* Look for "DDS " anywhere in the string to support combined packets */
-    char *ptr = strstr(buf, "DDS ");
-    if (ptr != NULL) {
-        while (ptr != NULL) {
-            char *next = strstr(ptr + 4, "DDS ");
-            char cmd_buf[256];
-            
-            if (next) {
-                int len = next - ptr;
-                /* Prevent off-by-one buffer overflow */
-                if (len >= sizeof(cmd_buf)) {
-                    len = sizeof(cmd_buf) - 1;
+    sleep_ms(10);
+
+    spi_dac_init();
+    app_i2c_slave_init();
+
+    /* Default: 1kHz sine, output off (target=0) until ESP32 enables */
+    g_wave_type        = WAVE_SINE;
+    g_phase_inc        = calc_phase_inc(1000);
+    g_amplitude_target = 0;
+
+    multicore_launch_core1(core1_entry);
+
+    /* Enable watchdog — must be pet at least once every WATCHDOG_TIMEOUT_MS.
+     * pause_on_debug=true so the watchdog doesn't fire during a debug halt.  */
+    watchdog_enable(WATCHDOG_TIMEOUT_MS, true);
+
+    /* Core 0: free-running DDS loop with amplitude ramp.
+     * s_amp_scale tracks the currently applied Q16 scale and steps toward
+     * g_amplitude_target by 1 count every AMP_RAMP_INTERVAL samples,
+     * enforcing the ≤ 100 uA/sec ramp limit.
+     * Phase accumulator always advances — no hard output cutoff ever.
+     * watchdog_update() is called every sample — at 323kHz this pets the
+     * watchdog ~323000 times per second, well within the 500ms timeout.      */
+    uint32_t phase_acc  = 0;
+    uint32_t amp_scale  = 0;   /* currently applied scale */
+    uint32_t ramp_count = 0;   /* interval counter */
+
+    while (true) {
+        /* ── Amplitude ramp step ────────────────────────────────────────── */
+        uint32_t target = g_amplitude_target;
+        if (amp_scale != target) {
+            if (++ramp_count >= AMP_RAMP_INTERVAL) {
+                ramp_count = 0;
+                if (amp_scale < target) {
+                    amp_scale++;
+                } else {
+                    amp_scale--;
                 }
-                strncpy(cmd_buf, ptr, len);
-                cmd_buf[len] = '\0';
-            } else {
-                strcpy(cmd_buf, ptr);
             }
-            
-            /* Strip trailing spaces, carriage returns, and newlines */
-            int len = strlen(cmd_buf);
-            while (len > 0 && (cmd_buf[len-1] == '\r' || cmd_buf[len-1] == '\n' || cmd_buf[len-1] == ' ')) {
-                cmd_buf[len-1] = '\0';
-                len--;
-            }
-            
-            handle_dds_command(cmd_buf + 4); /* Skip the "DDS " prefix */
-            ptr = next;
-        }
-    } else if (s_notify_enabled) {
-        char reply[280];
-        int  reply_len = snprintf(reply, sizeof(reply), "ECHO: %s", buf);
-        struct os_mbuf *om = ble_hs_mbuf_from_flat(reply, reply_len);
-        if (om) {
-            ble_gatts_notify_custom(s_conn_handle, s_tx_char_handle, om);
-            ESP_LOGI(TAG, "TX -> \"%s\"", reply);
-        }
-    }
-    return 0;
-}
-
-static int nus_tx_read_cb(uint16_t conn_handle, uint16_t attr_handle,
-                          struct ble_gatt_access_ctxt *ctxt, void *arg)
-{
-    const char *msg = "ESP32-S3 NUS ready";
-    return os_mbuf_append(ctxt->om, msg, strlen(msg));
-}
-
-static const struct ble_gatt_svc_def s_gatt_svcs[] = {
-    {
-        .type = BLE_GATT_SVC_TYPE_PRIMARY,
-        .uuid = &NUS_SERVICE_UUID.u,
-        .characteristics = (struct ble_gatt_chr_def[]) {
-            {
-                .uuid       = &NUS_TX_UUID.u,
-                .access_cb  = nus_tx_read_cb,
-                .val_handle = &s_tx_char_handle,
-                .flags      = BLE_GATT_CHR_F_READ | BLE_GATT_CHR_F_NOTIFY,
-            },
-            {
-                .uuid      = &NUS_RX_UUID.u,
-                .access_cb = nus_rx_write_cb,
-#if BLE_TEST_NO_SECURITY
-                /* No encryption required — Chrome desktop testing mode */
-                .flags     = BLE_GATT_CHR_F_WRITE | BLE_GATT_CHR_F_WRITE_NO_RSP,
-#else
-                /* WRITE_ENC: phone must be paired+encrypted before any
-                 * DDS command is accepted. Unencrypted writes are rejected
-                 * at the ATT layer — process_dds_command is never called.  */
-                .flags     = BLE_GATT_CHR_F_WRITE     |
-                             BLE_GATT_CHR_F_WRITE_NO_RSP |
-                             BLE_GATT_CHR_F_WRITE_ENC,
-#endif
-            },
-            { 0 },
-        },
-    },
-    { 0 },
-};
-
-/* ── GAP event handler ──────────────────────────────────────────────────── */
-static int gap_event_cb(struct ble_gap_event *event, void *arg)
-{
-    switch (event->type) {
-     case BLE_GAP_EVENT_CONNECT:
-        if (event->connect.status == 0) {
-            s_conn_handle    = event->connect.conn_handle;
-            s_notify_enabled = false;
-            oled_set_ble_connected(true);
-            ESP_LOGI(TAG, "Connected  handle=%d", s_conn_handle);
-
-            /* Request a relaxed connection interval so the radio can sleep
-             * between connection events.
-             * itvl_min=24 (30 ms) gives the central flexibility to start low.
-             * itvl_max=80 (100 ms) is widely accepted by phones and browsers
-             * while still allowing meaningful radio sleep between events.
-             * Latency=0 keeps command responsiveness; timeout=500x10ms=5s. */
-            struct ble_gap_upd_params conn_params = {
-                .itvl_min            = 24,    /*  30 ms */
-                .itvl_max            = 80,    /* 100 ms */
-                .latency             = 0,
-                .supervision_timeout = 500,   /*   5 s  */
-                .min_ce_len          = BLE_GAP_INITIAL_CONN_MIN_CE_LEN,
-                .max_ce_len          = BLE_GAP_INITIAL_CONN_MAX_CE_LEN,
-            };
-            ble_gap_update_params(s_conn_handle, &conn_params);
-
-#if !BLE_TEST_NO_SECURITY
-            /* Immediately initiate pairing/encryption — do not wait for
-             * the central to request it. This ensures no DDS commands can
-             * be accepted on an unencrypted link.                           */
-            int rc = ble_gap_security_initiate(s_conn_handle);
-            if (rc != 0 && rc != BLE_HS_EALREADY) {
-                ESP_LOGE(TAG, "security_initiate failed: %d — disconnecting", rc);
-                ble_gap_terminate(s_conn_handle, BLE_ERR_AUTH_FAIL);
-            }
-#endif
         } else {
-            s_conn_handle = BLE_HS_CONN_HANDLE_NONE;
-            ble_advertise();
-        }
-        break;
-
-    case BLE_GAP_EVENT_ENC_CHANGE:
-#if !BLE_TEST_NO_SECURITY
-        /* Encryption handshake complete (or failed). Reject unencrypted links. */
-        if (event->enc_change.status != 0) {
-            ESP_LOGW(TAG, "Encryption failed (status=%d) — disconnecting",
-                     event->enc_change.status);
-            ble_gap_terminate(event->enc_change.conn_handle, BLE_ERR_AUTH_FAIL);
-        } else {
-            ESP_LOGI(TAG, "Link encrypted successfully");
-        }
-#endif
-        break;
-
-    case BLE_GAP_EVENT_DISCONNECT:
-        // s_conn_handle    = BLE_HS_CONN_HANDLE_NONE;
-        // s_notify_enabled = false;
-        // oled_set_ble_connected(false);
-        // ble_advertise();
-        // break;
-
-        s_conn_handle = BLE_HS_CONN_HANDLE_NONE;
-        s_notify_enabled = false;
-        s_ble_shutdown_pending = true;
-
-        oled_set_ble_connected(false);
-
-        // Notify the FSM without performing a blocking ramp here.
-        fsm_handle_event(EV_BLE_LOST);
-
-        ble_advertise();
-        break;
-
-    case BLE_GAP_EVENT_ADV_COMPLETE:
-        ble_advertise();
-        break;
-
-    case BLE_GAP_EVENT_SUBSCRIBE:
-        if (event->subscribe.attr_handle == s_tx_char_handle) {
-            s_notify_enabled = event->subscribe.cur_notify;
-            /* Deliver any boot-time hardware fault now that we have a listener. */
-            if (s_notify_enabled && s_boot_fault_msg[0] != '\0') {
-                ble_notify_str(s_boot_fault_msg);
-            }
-        }
-        break;
-
-    case BLE_GAP_EVENT_PASSKEY_ACTION:
-        /* NimBLE asks us to display or confirm a passkey during pairing.
-         * DISP_ONLY: generate a random 6-digit key, log it to UART so the
-         * user can type it into the Windows Bluetooth pairing dialog.       */
-        if (event->passkey.params.action == BLE_SM_IOACT_DISP) {
-            struct ble_sm_io io = {0};
-            io.action   = BLE_SM_IOACT_DISP;
-            io.passkey  = 100000 + (esp_random() % 900000);
-            ESP_LOGI(TAG, ">>>>>> BLE PASSKEY: %06lu <<<<<<",
-                     (unsigned long)io.passkey);
-            /* TODO: show io.passkey on your OLED here */
-            int rc = ble_sm_inject_io(event->passkey.conn_handle, &io);
-            if (rc != 0) {
-                ESP_LOGE(TAG, "ble_sm_inject_io failed: %d", rc);
-            }
-        }
-        break;
-
-    default:
-        break;
-    }
-    return 0;
-}
-
-static void ble_advertise(void)
-{
-    struct ble_hs_adv_fields fields = {0};
-    fields.flags                 = BLE_HS_ADV_F_DISC_GEN | BLE_HS_ADV_F_BREDR_UNSUP;
-    fields.tx_pwr_lvl_is_present = 1;
-    fields.tx_pwr_lvl            = BLE_HS_ADV_TX_PWR_LVL_AUTO;
-    fields.name                  = (const uint8_t *)DEVICE_NAME;
-    fields.name_len              = strlen(DEVICE_NAME);
-    fields.name_is_complete      = 1;
-    fields.uuids128              = &NUS_SERVICE_UUID;
-    fields.num_uuids128          = 1;
-    fields.uuids128_is_complete  = 1;
-
-    ble_gap_adv_set_fields(&fields);
-
-    struct ble_gap_adv_params adv_params = {0};
-    adv_params.conn_mode = BLE_GAP_CONN_MODE_UND;
-    adv_params.disc_mode = BLE_GAP_DISC_MODE_GEN;
-    /* Slow advertising interval: ~1 s (1600 × 0.625 ms).
-     * Reduces radio duty cycle significantly while idle.
-     * Latency to discovery is ~1 s — acceptable for this application. */
-    adv_params.itvl_min  = 1600;   /* 1000 ms */
-    adv_params.itvl_max  = 1600;   /* 1000 ms */
-
-    ble_gap_adv_start(s_own_addr_type, NULL, BLE_HS_FOREVER,
-                      &adv_params, gap_event_cb, NULL);
-}
-
-static void ble_on_sync(void)
-{
-    ble_hs_util_ensure_addr(0);
-    ble_hs_id_infer_auto(0, &s_own_addr_type);
-    ble_advertise();
-}
-
-static void ble_on_reset(int reason)
-{
-    ESP_LOGE(TAG, "BLE host reset  reason=%d", reason);
-}
-
-static void nimble_host_task(void *param)
-{
-    nimble_port_run();
-    nimble_port_freertos_deinit();
-}
-
-static void heartbeat_task(void *param)
-{
-    uint32_t seq = 0;
-    for (;;) {
-        vTaskDelay(pdMS_TO_TICKS(5000));
-        if (s_conn_handle == BLE_HS_CONN_HANDLE_NONE || !s_notify_enabled) continue;
-
-        char msg[64];
-        int  len = snprintf(msg, sizeof(msg), "HB#%lu uptime=%lus",
-                            (unsigned long)seq,
-                            (unsigned long)(xTaskGetTickCount() * portTICK_PERIOD_MS / 1000UL));
-        struct os_mbuf *om = ble_hs_mbuf_from_flat(msg, len);
-        if (om) ble_gatts_notify_custom(s_conn_handle, s_tx_char_handle, om);
-        seq++;
-    }
-}
-
-/* ── Soft-stop button task ──────────────────────────────────────────────── */
-/* GPIO ISR wakes the task on falling edge (PIN_SOFT_STOP_PB, active-low).
- * The task then reads the level, debounces, and drives the FSM.
- * Blocks indefinitely between edges — zero CPU overhead while idle. */
-static TaskHandle_t s_soft_stop_task_handle;
-
-static void IRAM_ATTR soft_stop_isr(void *arg)
-{
-    BaseType_t woken = pdFALSE;
-    vTaskNotifyGiveFromISR(s_soft_stop_task_handle, &woken);
-    portYIELD_FROM_ISR(woken);
-}
-
-static void soft_stop_task(void *param)
-{
-    gpio_config_t io = {
-        .pin_bit_mask = 1ULL << PIN_SOFT_STOP_PB,
-        .mode         = GPIO_MODE_INPUT,
-        .pull_up_en   = GPIO_PULLUP_DISABLE,   /* external pull-up on the PCB */
-        .pull_down_en = GPIO_PULLDOWN_DISABLE,
-        .intr_type    = GPIO_INTR_NEGEDGE,     /* press only — active-low */
-    };
-    ESP_ERROR_CHECK(gpio_config(&io));
-    /* Keep the active-mode GPIO config (NEGEDGE interrupt + pull-up) during
-     * BLE light-sleep.  Without this the GPIO matrix swaps GPIO 9 to its
-     * default sleep config (interrupts disabled) and the edge is never seen. */
-    gpio_sleep_sel_dis(PIN_SOFT_STOP_PB);
-    ESP_ERROR_CHECK(gpio_isr_handler_add(PIN_SOFT_STOP_PB, soft_stop_isr, NULL));
-    ESP_LOGI("SOFT_STOP", "ISR registered on GPIO %d", PIN_SOFT_STOP_PB);
-
-    for (;;) {
-        /* 1. Sleep indefinitely until the ISR fires the first time */
-        ulTaskNotifyTake(pdTRUE, portMAX_DELAY); 
-
-        /* 2. Wait just long enough for the physical button to stop bouncing */
-        vTaskDelay(pdMS_TO_TICKS(50)); 
-
-        /* 3. Read the stable level */
-        int level = gpio_get_level(PIN_SOFT_STOP_PB);
-        ESP_LOGI("SOFT_STOP", "Task triggered — GPIO %d level=%d", PIN_SOFT_STOP_PB, level);
-
-        if (level == 0) {   /* still pressed */
-            fsm_handle_event(EV_SOFTKILL);
-            ble_notify_str("SOFT STOP — all channels disabled");
+            ramp_count = 0;
         }
 
-        /* 4. Flush any extra ISR triggers that queued up 
-         * while the task was busy delaying or running the FSM event. */
-        ulTaskNotifyTake(pdTRUE, 0); 
+        /* ── DDS output — always running ────────────────────────────────── */
+        phase_acc += g_phase_inc;
+        uint32_t idx = phase_acc >> LUT_SHIFT;
+        const uint16_t *lut = lut_table[(uint8_t)g_wave_type];
+        uint16_t sample = (uint16_t)(((uint32_t)lut[idx] * amp_scale) >> 16);
+        spi_dac_write(sample);
+
+        /* ── Pet the watchdog ───────────────────────────────────────────── */
+        watchdog_update();
     }
-}
-
-/* ── app_main ───────────────────────────────────────────────────────────── */
-void app_main(void)
-{
-    /* Disable all HV channel rails immediately — before any other init. */
-    ESP_ERROR_CHECK(channel_rails_init());
-
-    esp_err_t ret = nvs_flash_init();
-    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
-        ESP_ERROR_CHECK(nvs_flash_erase());
-        ret = nvs_flash_init();
-    }
-    ESP_ERROR_CHECK(ret);
-
-    /* ── Power management: automatic light-sleep ────────────────────────────
-     * ESP-IDF's tickless idle will enter light-sleep whenever all FreeRTOS
-     * tasks are blocked.  NimBLE schedules its own radio wakeups, so BLE
-     * connectivity is preserved.  The soft-stop GPIO ISR is already protected
-     * with gpio_sleep_sel_dis(), so that edge is never missed.
-     *
-     * max_freq / min_freq: S3 can scale between 10–240 MHz.  Set both to 240
-     * to avoid dynamic scaling side-effects on I2C timing (the I2C peripheral
-     * clock is derived from APB, which tracks CPU freq on S3).
-     * light_sleep_enable: true — the key flag that activates this feature.   */
-    esp_pm_config_t pm_cfg = {
-        .max_freq_mhz       = 160,  /* must match CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ */
-        .min_freq_mhz       = 160,  /* fixed to avoid I2C APB clock scaling issues */
-        .light_sleep_enable = true,
-    };
-    esp_err_t pm_err = esp_pm_configure(&pm_cfg);
-    if (pm_err != ESP_OK) {
-        ESP_LOGW(TAG, "esp_pm_configure failed (%s) — running without sleep",
-                 esp_err_to_name(pm_err));
-    } else {
-        ESP_LOGI(TAG, "Automatic light-sleep enabled");
-    }
-
-    fsm_init(&s_dds);   /* starts in STATE_BOOT */
-
-    /* Enable LV rails before DDS bus init so the slaves power up with their
-     * supply rails already stable.  Rails were driven LOW in channel_rails_init()
-     * at the very top of app_main(), so there is no premature HV exposure.   */
-    for (uint8_t ch = 0; ch < NUM_CHANNELS; ch++) {
-        channel_rails_set(ch, true);
-    }
-    /* Wait for the HV rails to settle and for the I2C pull-up supply to
-     * stabilise before attempting any I2C transactions.                  */
-    vTaskDelay(pdMS_TO_TICKS(5000)); //Adjust as needed based on hardware characteristics
-    vTaskDelay(pdMS_TO_TICKS(500));
-
-    /*Enable the DDS bus*/
-    esp_err_t dds_err = dds_master_init_new_bus(&s_dds,
-                                            PIN_DDS_SDA, PIN_DDS_SCL,
-                                            I2C_NUM_0, DDS_I2C_SPEED_HZ);
-    if (dds_err != ESP_OK) {
-        ESP_LOGE(TAG, "DDS master init failed: %s", esp_err_to_name(dds_err));
-        snprintf(s_boot_fault_msg, sizeof(s_boot_fault_msg),
-                 "HW ERR DDS init failed: %s", esp_err_to_name(dds_err));
-        fsm_handle_event(EV_HW_FAIL);   /* → STATE_FAULT */
-    } else {
-        /* Allow the ISO1641B isolator and RP2040 slave to fully settle before
-        * the first I2C transaction.  Without this delay, the isolator's
-        * direction-detection logic can see a glitch on the still-stabilising
-        * RP2040 side and lock the ESP32-S3 I2C peripheral.                  */
-        fsm_handle_event(EV_HW_OK);     /* → STATE_IDLE */
-    }
-
-    /*Enable the OLED display*/
-    if (oled_init()) {
-        oled_start_display_task(&s_dds);
-    }
-
-    s_dds_cmd_queue = xQueueCreate(DDS_CMD_QUEUE_LEN, sizeof(dds_cmd_msg_t));
-    xTaskCreate(dds_cmd_task, "dds_cmd", 4096, NULL, 5, NULL);
-
-    nimble_port_init();
-    ble_hs_cfg.sync_cb  = ble_on_sync;
-    ble_hs_cfg.reset_cb = ble_on_reset;
-
-    /* ── Security configuration ─────────────────────────────────────────
-     * Set BLE_TEST_NO_SECURITY 1 for Chrome desktop testing (no pairing).
-     * Set BLE_TEST_NO_SECURITY 0 for Android production (full security).   */
-#if BLE_TEST_NO_SECURITY
-    ble_hs_cfg.sm_io_cap  = BLE_SM_IO_CAP_NO_IO;  /* "Just Works" — no passkey */
-    ble_hs_cfg.sm_bonding = 0;
-    ble_hs_cfg.sm_mitm    = 0;
-    ble_hs_cfg.sm_sc      = 0;
-    ESP_LOGW(TAG, "*** BLE SECURITY DISABLED — testing mode ***");
-#else
-    /* sm_io_cap    DISP_ONLY: ESP32 displays a passkey; user confirms on phone.
-     * sm_bonding   Store the Long-Term Key in NVS so re-pairing is not needed
-     *              on every reconnect.
-     * sm_mitm      Require man-in-the-middle protection (passkey comparison).
-     *              Without this, an attacker within BLE range could intercept
-     *              the pairing and inject DDS commands to the high-power output.
-     * sm_sc        BLE Secure Connections (ECDH key exchange, BLE 4.2+).
-     *              Significantly stronger than legacy pairing.
-     * key_dist     Exchange encryption + identity keys in both directions so
-     *              bonding works correctly after reconnect.                  */
-    ble_hs_cfg.sm_io_cap         = BLE_SM_IO_CAP_DISP_ONLY;
-    ble_hs_cfg.sm_bonding        = 1;
-    ble_hs_cfg.sm_mitm           = 1;
-    ble_hs_cfg.sm_sc             = 1;
-    ble_hs_cfg.sm_our_key_dist   = BLE_SM_PAIR_KEY_DIST_ENC | BLE_SM_PAIR_KEY_DIST_ID;
-    ble_hs_cfg.sm_their_key_dist = BLE_SM_PAIR_KEY_DIST_ENC | BLE_SM_PAIR_KEY_DIST_ID;
-#endif
-
-    ble_svc_gap_init();
-    ble_svc_gatt_init();
-
-    ble_gatts_count_cfg(s_gatt_svcs);
-    ble_gatts_add_svcs(s_gatt_svcs);
-    ble_svc_gap_device_name_set(DEVICE_NAME);
-
-    gpio_install_isr_service(0);
-
-    nimble_port_freertos_init(nimble_host_task);
-    xTaskCreate(heartbeat_task,  "ble_heartbeat", 4096, NULL, 5, NULL);
-    xTaskCreate(soft_stop_task,  "soft_stop",     4096, NULL, 6,
-                &s_soft_stop_task_handle);
 }
